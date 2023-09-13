@@ -1,0 +1,66 @@
+name: Watch GitHub Stars
+author: Shunsuke Suzuki
+
+branding:
+  icon: 'check'
+  color: 'yellow'
+
+description: |
+  Watch GitHub Stars and post comments to GitHub Issues.
+  GitHub CLI (gh) is required.
+  This action assumes that the workflow run is triggered by a watch:started event.
+
+inputs:
+  number:
+    description: The GitHub Issue number.
+    required: true
+  body:
+    description: The comment body.
+    default: |
+      [${{github.event.sender.login}}](${{github.event.sender.html_url}}) starred (${{github.event.repository.stargazers_count}}) :star:
+
+      <img width="32" alt="image" src="${{github.event.sender.avatar_url}}">
+  github_token:
+    description: |
+      GitHub Access Token to post comments.
+      The permission `issues: write` is necessary.
+    default: ${{github.token}}
+  repo:
+    description: |
+      GitHub Repository to post comments
+      The default is $GITHUB_REPOSITORY
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        if [ -z "$NUMBER" ]; then
+          echo "::error::The input number is required"
+          exit 1
+        fi
+      env:
+        NUMBER: ${{inputs.number}}
+    - id: repo
+      shell: bash
+      run: |
+        if [ -n "$REPO" ]; then
+          echo "repo=$REPO" >> "$GITHUB_OUTPUT"
+        fi
+        echo "repo=$GITHUB_REPOSITORY" >> "$GITHUB_OUTPUT"
+      env:
+        REPO: ${{inputs.repo}}
+    - run: gh -R "$REPO" issue comment "$NUMBER" --body "$BODY"
+      shell: bash
+      env:
+        REPO: ${{steps.repo.outputs.repo}}
+        NUMBER: ${{inputs.number}}
+        BODY: ${{inputs.body}}
+        GITHUB_TOKEN: ${{inputs.github_token}}
+    - run: |
+        echo "::notice::Posted a comment to $GITHUB_SERVER_URL/$REPO/issues/$NUMBER"
+      shell: bash
+      env:
+        REPO: ${{steps.repo.outputs.repo}}
+        NUMBER: ${{inputs.number}}
