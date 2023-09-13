@@ -1,0 +1,16 @@
+---
+name: watch-star
+on:
+  watch:
+    types:
+      - started
+jobs:
+  watch-star:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247 # v3.5.1
+      - uses: ./
+        with:
+          number: 5 # https://github.com/suzuki-shunsuke/watch-star-action/issues/5
