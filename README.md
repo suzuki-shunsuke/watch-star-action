@@ -27,7 +27,7 @@ jobs:
     permissions:
       issues: write
     steps:
-      - uses: suzuki-shunsuke/watch-star-action@main
+      - uses: suzuki-shunsuke/watch-star-action@v0.1.1
         with:
           number: 167 # Change the issue number
 ```
