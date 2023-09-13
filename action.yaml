@@ -5,10 +5,7 @@ branding:
   icon: 'check'
   color: 'yellow'
 
-description: |
-  Watch GitHub Stars and post comments to GitHub Issues.
-  GitHub CLI (gh) is required.
-  This action assumes that the workflow run is triggered by a watch:started event.
+description: Notify your repository's stars to GitHub Issues
 
 inputs:
   number:
